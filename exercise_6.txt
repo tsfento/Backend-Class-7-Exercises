@@ -1,0 +1,7 @@
+The previous exercise violates normalization rules because the category is repeated for each product. To fix this,
+we can create a separate Category model and set up a one-to-many relationship between Category and Product.
+
+Objective: Create a separate Category model and set up a one-to-many relationship between Category and Product.
+------------------------------------------------------------------------------------------------------------------
+
+I guess I misread the task for Exercise 3, because the goal of this exercise is exactly what I did for that one.
