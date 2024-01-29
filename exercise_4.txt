@@ -1,0 +1,37 @@
+rails new fitness_tracker_api --api
+
+rails g model User name:string email:string password:string
+
+rails g model Workout name:string date:date duration:integer user:references
+
+class User < ApplicationRecord
+    has_many :workouts
+end
+
+class Workout < ApplicationRecord
+  belongs_to :user
+end
+
+class User < ApplicationRecord
+    validates :name, presence: true
+    validates :email, presence: true, uniqueness: true
+    validates :password, presence: true
+
+    has_many :workouts
+end
+
+class Workout < ApplicationRecord
+  validates :name, presence: true, length { maximum: 50 }
+  validates :date, presence: true
+  validates :duration, presence: true, comparison { greater_than: 0, maximum: 240 }
+
+  belongs_to :user
+end
+
+Workout.create(user: User.find(1) , name: "Crunches", date: "2024-01-29", duration: 15)
+Workout.create(user: User.find(1) , name: "Squats", date: "2024-01-29", duration: 15)
+
+User.find(1).workouts
+
+[#<Workout:0x00007f6fd53e4c60 id: 1, name: "Crunches", date: Mon, 29 Jan 2024, duration: 15, user_id: 1, created_at: Mon, 29 Jan 2024 21:19:46.966005000 UTC +00:00, updated_at: Mon, 29 Jan 2024 21:19:46.966005000 UTC +00:00>,
+ #<Workout:0x00007f6fd53e4b20 id: 2, name: "Squats", date: Mon, 29 Jan 2024, duration: 15, user_id: 1, created_at: Mon, 29 Jan 2024 21:19:59.845310000 UTC +00:00, updated_at: Mon, 29 Jan 2024 21:19:59.845310000 UTC +00:00>]
