@@ -1,0 +1,40 @@
+rails g model Category name:string
+
+rails db:migrate
+
+class Product < ApplicationRecord
+    validates :name, presence: true, uniqueness: true
+    validates :price, comparison: { greater_than: 0 }
+
+    belongs_to :category
+end
+
+class Category < ApplicationRecord
+    has_many :products
+end
+
+Category.create(name: "Fruit")
+Category.create(name: "Vegetables")
+Category.create(name: "Dairy")
+
+[#<Category:0x00007fc1d49c6b28 id: 1, name: "Fruit", created_at: Mon, 29 Jan 2024 20:18:02.190298000 UTC +00:00, updated_at: Mon, 29 Jan 2024 20:18:02.190298000 UTC +00:00>,
+ #<Category:0x00007fc1d53bd5c8 id: 2, name: "Vegetables", created_at: Mon, 29 Jan 2024 20:18:12.243342000 UTC +00:00, updated_at: Mon, 29 Jan 2024 20:18:30.459429000 UTC +00:00>,
+ #<Category:0x00007fc1d53bd488 id: 3, name: "Dairy", created_at: Mon, 29 Jan 2024 20:18:40.862472000 UTC +00:00, updated_at: Mon, 29 Jan 2024 20:18:40.862472000 UTC +00:00>]
+
+Added a migration to Product that added a reference to category:
+rails g migration add_category_to_product category:references
+
+Had an issue with rails db:migrate because the table had data in it.
+It would try to assign a category column to the Product table, but
+since it was null, the null check on the migration would fail. So,
+the migration would abort.
+
+There's probably another way I could have fixed it, but since I only
+had 2 products in my table, I just deleted them. The migration went
+fine after that and I re-added my products passing in the category
+they belong to.
+
+Product.create(category: Category.find(1), name: "Orange", price: 2.99)
+Product.create(category: Category.find(1), name: "Lemon", price: 3.99)
+
+Product.where(category: 1)
